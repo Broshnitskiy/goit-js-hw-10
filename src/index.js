@@ -14,30 +14,35 @@ inputRef.addEventListener("input", debounce(onInputText, DEBOUNCE_DELAY))
 
 function onInputText() {
     countryListRef.innerHTML = "";
+    countryInfoRef.innerHTML = "";
         fetchCountries(inputRef.value.trim())
             .then(countriesData => {
                 if (countriesData.length > 10) {
-                Notify.info("Too many matches found. Please enter a more specific name.");
+                    Notify.info("Too many matches found. Please enter a more specific name.");
+                    
                 } else if (countriesData.length >= 2 && countriesData.length <= 10) { 
                     countriesData.map(country => {
-                        countryListRef.insertAdjacentHTML("beforeend", `<li><img src="${country.flags.svg}" alt="country flag" width="50">${country.name.official}</li>`)
+                        countryListRef.insertAdjacentHTML("beforeend", markUpCountryList(country));
                     })
                     
                 } else {
-                    console.log(countriesData[0].languages)
-                    // countryInfoRef.innerHTML = `<img src="${country.flags.svg}" alt="country flag">
-                    // <h1>${countriesData.name.official}</h1>
-                    // <p>${countriesData.capital}</p>
-                    // <p>${countriesData.population}</p>
-                    // <p>${Object.values(countriesData[0].languages).join(" ")}</p>`
-                    
-            }
-                
-        })
+                    countryInfoRef.innerHTML = markUpCountryInfo(countriesData[0])
+                } 
+            })
             .catch(error => {
                 Notify.failure("Oops, there is no country with that name");
-        });
-    
-    
+            });
+}
+
+function markUpCountryList({flags, name}) {
+    return `<li class = "country-item"><img src="${flags.svg}" alt="country flag" width="50"><p class = "country-name">${name.official}</p></li>`
+};
+
+function markUpCountryInfo({flags, name, capital, population, languages}) {
+    return `<img src="${flags.svg}" alt="country flag" width="250">
+    <h1>${name.official}</h1>
+    <p><b>Capital: </b>${capital}</p>
+    <p><b>Population: </b>${population}</p>
+    <p><b>Languages: </b>${Object.values(languages).join(", ")}</p>`
 }
 
