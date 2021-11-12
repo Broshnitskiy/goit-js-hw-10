@@ -12,9 +12,13 @@ const countryInfoRef = document.querySelector(".country-info");
 
 inputRef.addEventListener("input", debounce(onInputText, DEBOUNCE_DELAY))
 
-function onInputText() {
+function onInputText(e) {
     countryListRef.innerHTML = "";
     countryInfoRef.innerHTML = "";
+    if (inputRef.value.trim() === "") {
+        return
+    };
+   
         fetchCountries(inputRef.value.trim())
             .then(countriesData => {
                 if (countriesData.length > 10) {
